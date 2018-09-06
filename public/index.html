@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="utf-8">
+	<title>Site web</title>
+	<link rel="stylesheet" href="stylesheets/style.css"/>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+</head>
+
+<body>
+	<main id="app">
+		<br><br>
+		<div id="siteCentral">
+			<header>
+				<!-- Logo -->
+				<div class="centrerBouton">
+					<button class="retourTop5" v-on:click="chgmtPageEtFiltre ('PageTop5', '', '5', '')" >
+						<img id="logo" src="https://cdn.glitch.com/c8e17fcb-6ead-4865-9643-b65ffba3819f%2Flogo-app.png?1535393847500" />
+					</button>
+				</div>
+				<!-- Boutons quand pas connecté (à droite)-->
+				<div id="boutonsComptePasConnecte" class="material-icons" v-if="!est_connecte">
+					<a href="javascript:void(0)">account_circle</a>
+					<div class="descenteBoutonsDroite">
+						<button v-on:click="chgmtPageEtFiltre ('PageConnexion', '', '', '')" class="liensComptePasConnecte">Connection </button>
+						<button v-on:click="chgmtPageEtFiltre ('PageInscription', '', '', '')" class="liensComptePasConnecte">Inscription </button>
+					</div>
+				</div>
+				<!-- Boutons utilisateur quand connecté (à droite)-->
+				<div id="boutonsCompteConnecte" class="material-icons" v-if="est_connecte">
+					<a href="javascript:void(0)">sentiment_satisfied_alt</a>
+					<div class="descenteBoutonsDroite">
+						<button v-on:click="chgmtPageEtFiltre ('PageInfoPerso', '',  '', '')" class="liensCompteConnecte" v-if="listeClients.nom_utilisateur !== 'admin'">Info Personnelles </button>
+						<!-- <button v-on:click="chgmtPageEtFiltre ('PageMail', '', '', '')" class="liensCompteConnecte">Mail</button> -->
+						<button v-on:click="fonctionDeconnection()" class="liensCompteConnecte">Déconnection</button>
+					</div>
+				</div>
+				<!-- Boutons du menu quand connecté (à gauche) -->
+				<div id="boutonMenu" class="material-icons">
+					<a href="javascript:void(0)" v-if="est_connecte">menu</a>
+					<div id="descenteBoutonsMenu">
+						<!-- Utilisateur non administrateur -->
+						<button v-if="listeClients.nom_utilisateur !== 'admin'" v-on:click="affichageRecetteAleatoire('PageRecette')" class="liensMenu">Pas d'idée </button>
+						<button v-if="listeClients.nom_utilisateur !== 'admin'" v-on:click="chgmtPageEtFiltre ('PageFavoris', '', '', '')" class="liensMenu">Favoris</button>
+						<button v-if="listeClients.nom_utilisateur !== 'admin'" v-on:click="chgmtPageEtFiltre ('PageListeCourses', '', '', '')" class="liensMenu">Liste de courses</button>
+
+						<!-- Utilisateur ET administrateur -->
+						<button v-on:click="chgmtPageEtFiltre ('PageProposition', '', '', '')" class="liensMenu">Proposition</button>
+
+						<!-- Administrateur -->
+						<button v-if="listeClients.nom_utilisateur === 'admin'" v-on:click="chgmtPageEtFiltre ('PageListeClients', '', '', '', '')" class="liensMenu">Liste clients</button>
+						<button v-if="listeClients.nom_utilisateur === 'admin'" v-on:click="chgmtPageEtFiltre ('PageToutesRecettes', '', '', '', '')" class="liensMenu">Toutes les recettes</button>
+					</div>
+				</div>
+				<div class="centrerBouton">
+					<button v-on:click="chgmtPageEtFiltre ('PageTop5', '', '5', '')" class="retourTop5">
+						<h1>Trouve ta recette !</h1>
+						<p id="bonjour" v-if="est_connecte === true">Bonjour {{listeClients.nom_utilisateur}} </p>
+					</button>
+				</div>
+			</header>
+			<div id="contenu">
+				<nav>
+					<ul class="menuSite">
+						<li class="menuSiteElement"><button v-on:click="chgmtPageEtFiltre ('PageResultats', 'entree', '', '')" class="menuSiteLien">Entrées</button></li>
+						<li class="menuSiteElement"><button v-on:click="chgmtPageEtFiltre ('PageResultats', 'plat', '', '')" class="menuSiteLien">Plats</button></li>
+						<li class="menuSiteElement"><button v-on:click="chgmtPageEtFiltre ('PageResultats', 'dessert',  '', '')" class="menuSiteLien">Desserts</button></li>
+						<li class="menuSiteElement"><button v-on:click="chgmtPageEtFiltre ('PageResultats', '', '', 'o')" class="menuSiteLien">Nouvelles recettes</button></li>		
+					</ul>
+					<br>
+					<form id="recherche" >
+						<input id="barre" type="search" name="q" placeholder="Rechercher par ingrédient" v-model="filtreIngredient">
+						<button v-on:click.prevent="chgmtPageEtFiltre ('PageResultats','', '', '')" class="img-submit">
+							<img id="loupe" src="https://cdn.glitch.com/c8e17fcb-6ead-4865-9643-b65ffba3819f%2Floupe.png?1535441998030" alt="Recherche">
+						</button>
+					</form>
+				</nav>
+				<!-- Page d'accueil (Top5) -->
+				<section v-if="pageActuelle === 'PageTop5'" id="PageTop5">
+					<h2>Top 5</h2>
+					<ul>
+						<li v-for="(item, index) in myList">{{ item.name }}
+							<button v-on:click="deleteElement(index)">Supprimer !</button>
+						</li>
+					</ul>
+					<input type="text" v-model="name">
+					<button v-on:click="sendNewElement()">Ajouter !</button>
+
+					<table class="Recettes" >
+						<tr v-for="key in Object.keys(listeRecettes[0])" v-if="key==='description' || key==='titre'">
+							<td id="vueRecetteTop5" v-for="recette in affichageFiltre()"> {{recette[key]}}</td>
+						</tr>
+					</table>
+				</section>
+
+				<!-- Pages du menu SI connection -->
+				<section v-else-if="pageActuelle === 'PageInfoPerso'" id="PageInfoPerso">
+					<h2>Informations Personnelles</h2>
+					<p>Identifiant : {{listeClients.nom_utilisateur}} </p>
+					<p>Mot de passe : {{listeClients.mot_de_passe}}</p>
+				</section>
+				<!-- <section v-else-if="pageActuelle === 'PageMail'" id="PageMail">
+					<h2>Changez votre email</h2>
+					<p>blablabla</p>
+				</section> -->
+				<section v-else-if="pageActuelle === 'PageDeconnection'" id="PageDeconnection">
+					<h2>Vous êtes maintenant déconnecté !</h2>
+				</section>
+
+				<!-- Pages du menu SI PAS connection -->
+				<section v-else-if="pageActuelle === 'PageConnexion'" id="PageConnexion">
+					<form class="formulaireConnexion">
+						<h2>
+							Connexion
+						</h2>
+						<div v-if="!input_identifiant" class="infoManquante">
+							<strong>Veuillez renseigner votre nom d'utilisateur</strong>
+						</div>
+						<label>
+							<b>Identifiant </b>
+							<input type="utilisateur" v-model="input_identifiant" placeholder="Nom d'utilisateur" required>
+						</label>
+						<br><br>
+						<div v-if="!input_mdp" class="infoManquante">
+							<strong>Veuillez renseigner votre mot de passe</strong>
+						</div>
+						<label>
+							<b>Mot de passe </b>
+							<input class="mot_de_passe" v-bind:type="mot_de_passe" v-model="input_mdp" placeholder="Mot de passe" required>
+							<button type="password" v-on:click.prevent="modifVisibilite()">Afficher/Masquer</button>
+						</label>
+						<br><br>
+						<button class="boutonConnexion" v-on:click.prevent="fonctionConnexion()">Se connecter</button>          
+					</form>
+				</section>
+				<section v-else-if="pageActuelle === 'PageInscription'" id="PageInscription">
+					<form class="formulaireInscription">
+						<h2>
+							Inscription
+						</h2>
+						<div v-if="!input_identifiant" class="infoManquante">
+							<strong>Veuillez renseigner un nom d'utilisateur</strong>
+						</div>
+						<label>
+							<b>Identifiant </b>
+							<input type="utilisateur" v-model="input_identifiant" placeholder="Nom d'utilisateur" required>
+						</label>
+						<br><br>
+						<div v-if="!input_mdp" class="infoManquante">
+							<strong>Veuillez renseigner un mot de passe</strong>
+						</div>
+						<label>
+							<b>Mot de passe </b>
+							<input class="mot_de_passe" v-bind:type="mot_de_passe" v-model="input_mdp" placeholder="Mot de passe" required>
+						</label>
+						<br><br>
+						<div v-if="!input_confirmation_mdp" class="infoManquante">
+							<strong>Veuillez confirmer votre mot de passe</strong>
+						</div>
+						<div v-if="input_confirmation_mdp!==input_mdp" class="infoManquante">
+							<strong>Mauvaise correspondance des mots de passe !</strong>
+						</div>
+						<label>
+							<b>Confirmation </b>
+							<input class="mot_de_passe" v-bind:type="mot_de_passe"  v-model="input_confirmation_mdp" placeholder="Confirmez votre mot de passe" required>
+							<button type="password" v-on:click.prevent="modifVisibilite()">Afficher/Masquer</button>
+						</label>
+						<br><br>
+						<button class="boutonConnexion" v-on:click.prevent="fonctionInscription()">S'inscrire</button>
+					</form>
+				</section>
+
+				<!-- Pages du menu de gauche -->
+				<section v-else-if="pageActuelle === 'PagePasIdee'" id="PagePasIdee">
+					<h2>
+						Pas d'idées...
+					</h2>
+					<div>
+					</div>
+				</section>
+				<section v-else-if="pageActuelle === 'PageProposition'"  id="PageProposition">
+					<h2>
+						Vos propositions de recettes
+					</h2>
+					<div>
+					</div>
+				</section>
+				<section v-else-if="pageActuelle === 'PageListeCourses'" id="PageListeCourses">
+					<h1>
+						Votre liste de courses
+					</h1>
+					<ul id="Courses">
+						<li v-for="course in listeCourses">
+							{{course.nom}}
+						</li>
+					</ul>
+				</section> 
+				<section v-else-if="pageActuelle === 'PageFavoris'" id="PageFavoris">
+					<h1>
+						Vos Favoris
+					</h1>
+					<ul id="mesFavoris">
+						<li v-for="favori in listeFavoris">
+							{{favori.titre}}
+						</li>
+					</ul>
+				</section>
+				<!-- Si administrateur -->
+				<section v-else-if="pageActuelle === 'PageListeClients'" id="PageListeClients">
+					<h2>
+						Liste des clients
+					</h2>
+					<div>
+						<ul>
+							<li v-for="(item, index) in myList">{{ item.name }}
+								<button v-on:click="deleteElement(index)">Supprimer !</button>
+							</li>
+						</ul>
+						<input type="text" v-model="name">
+						<button v-on:click="sendNewElement()">Ajouter !</button>
+					</div>
+				</section>
+				<section v-else-if="pageActuelle === 'PageToutesRecettes'" id="PageToutesRecettes">
+					<h2>
+						Toutes les recettes
+					</h2>
+					<div>
+						<ul>
+							<li v-for="(item, index) in myList">{{ item.name }}
+								<button v-on:click="deleteElement(index)">Supprimer !</button>
+							</li>
+						</ul>
+						<input type="text" v-model="name">
+						<button v-on:click="sendNewElement()">Ajouter !</button>
+					</div>
+				</section>
+				<!-- Dans les deux cas -->
+				<section v-else-if="pageActuelle === 'PageResultats'" id="PageResultats">
+					<h2>Résultats</h2>
+					<ul class="Recettes">
+						<p v-if="contenuActuel === 'ResultatNegatif'">
+							Aucune recette ne contient cet ingrédient.
+						</p>
+						<li v-for="recette in affichageFiltre()">
+							<button v-if="contenuActuel === 'ResultatPositif'" id="boutonRecette" v-on:click="affichageRecette('PageRecette', recette)" >
+								{{recette.titre}}
+							</button>
+						</li>
+					</ul>
+
+				</section>
+				<section v-else-if="pageActuelle === 'PageRecette'" id="PageRecette">
+					<h1>
+						{{recetteAAfficher.titre}}
+					</h1>
+					<button class="boutonOptions" title="ajouterListeCourses" v-on:click="chgmtPageEtFiltre ('PageListeCourses', '', '', '')">
+						<i  class="material-icons">add_shopping_cart</i>
+					</button>
+					<button class="boutonOptions" title="ajouterFavoris" v-on:click="chgmtPageEtFiltre ('PageFavoris', '', '', '')">
+						<i class="material-icons">favorite_border</i>
+					</button>
+					<div class="description">
+						<p id="texteDescription">
+							{{recetteAAfficher.description}}
+							<p id="piedDescription">
+								Proposée par {{recetteAAfficher.auteur}}
+							</p>
+						</p>
+					</div>
+					<div id="vueRecette">
+						<img id="imageRecette" v-bind:src="recetteAAfficher.image" />
+						<aside id="ingredients">
+							<h2>
+								Ingrédients
+							</h2>
+							<ul>
+								<li v-for="ingredient in recetteAAfficher.ingredients">
+									{{ingredient.nom}}
+								</li>
+							</ul>
+						</aside>
+					</div>
+					<aside id="instructions">
+						<h2>
+							Instructions
+						</h2>
+						<ol>
+							<li v-for="instruction in recetteAAfficher.instructions">{{instruction.texte}}
+							</li>
+						</ol>
+					</aside>
+				</section>
+				<br><br>
+			</div>
+			<footer>
+				<p>Angélique Baille - Agnès Gaspard</p>
+				<p>4A</p>
+			</footer>
+		</div>
+	</main>
+
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.15.2/axios.js">  </script>
+	<script src="javascripts/script.js"></script>
+</body>
+</html>

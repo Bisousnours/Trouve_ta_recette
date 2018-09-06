@@ -1,0 +1,338 @@
+/* Style global du site */
+body{
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: 0px;
+  padding-top: 2%;
+  padding-bottom: 2%;
+  background-image: url("http://www.maximumwall.com/wp-content/uploads/2017/01/fond-ecran-wallpaper-image-nourriture-espagnol-19.jpg");
+  background-size: 160%;
+}
+
+main{ /*Vue app*/
+  width : 70%;
+  margin : auto;
+}
+
+#siteCentral{ 
+  background-color: white;
+  margin: auto;
+}
+
+
+h1{
+  text-align: center;
+  color : MediumSeaGreen;
+  font-size: 2.5em;
+  position: relative;
+}
+
+h2{
+  text-align: center;
+  color : SlateBlue
+}
+
+h3{
+  text-align: center
+}
+
+a:link{
+  color : black;
+  text-decoration : none; 
+}
+
+/* Header */
+#logo{
+  width : 200px;
+  margin : auto;
+  display: block;
+}
+
+.centrerBouton{
+  text-align: center;
+}
+
+
+/*Boutons*/
+/*Boutons de droite*/
+#boutonsComptePasConnecte, #boutonsCompteConnecte{
+  font-size: 50px;
+  float:right;
+  padding-right: 30px;
+}
+
+.descenteBoutonsDroite{
+  display: none;
+  float:right;
+  background-color: #333;
+  max-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  position: absolute;
+}
+
+.liensComptePasConnecte, .liensCompteConnecte{
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+  border: none;
+}
+
+.descenteBoutonsDroite .liensComptePasConnecte{
+  min-width: 110px;
+}
+
+.descenteBoutonsDroite .liensCompteConnecte{
+  min-width: 150px;
+}
+
+/*Bouton Menu de gauche*/
+#boutonMenu{
+  font-size: 50px;
+  float: left;
+  padding-left: 25px;
+  width: 50px;
+}
+
+#descenteBoutonsMenu{
+  display: none;
+  float:left;
+  background-color: #333;
+  max-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  position: absolute;
+}
+
+#descenteBoutonsMenu .liensMenu{
+  color: black;
+  width: 135px;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+  border: none;
+}
+
+.liensComptePasConnecte:hover, .liensMenu:hover, .liensCompteConnecte:hover{
+  background-color: #f1f1f1;
+}
+
+#boutonsComptePasConnecte:hover .descenteBoutonsDroite, #boutonMenu:hover #descenteBoutonsMenu, #boutonsCompteConnecte:hover .descenteBoutonsDroite{
+  display: block;
+}
+
+.retourTop5{
+  background-color: rgba(0, 0, 0, 0);
+  border: none;
+}
+
+#bonjour{
+  text-align: center;
+  color: orange;
+  font-weight: bold;
+  font-size: 1.5em;
+}
+
+
+
+
+
+.Recettes{ /*Top5*/
+  margin : auto;
+  text-align : center
+}
+
+footer{
+  text-align : center;
+  font-size: small;
+  border-top: 1px solid black;
+  width: 40%;
+  margin: auto;
+  padding-bottom: 0.5%;
+}
+
+
+
+/* Contenu du site */
+/* Navigation (bandeau noir) */
+nav{
+  text-align: center;
+  width: 70%;
+  margin: auto;
+}
+
+.menuSite{
+  list-style-type: none;
+  /*width:70%;*/
+  margin: auto;
+  overflow: hidden;
+  background-color: #333;
+  text-align: center;
+  padding: 0px;
+  display: inline-block;
+}
+
+.menuSiteElement .menuSiteLien{
+  display: block;
+  color: white;
+  padding: 6px; /*meme valeur pour les 4 côtés*/
+  text-decoration: none;
+}
+
+.menuSiteElement{
+  float: left;
+  text-rendering: optimizeSpeed;
+}
+
+.menuSiteLien{
+  background-color: #333;
+  border: none;
+  width: 150px;
+}
+
+.menuSiteElement .menuSiteLien:hover{
+  background-color: #111;
+}
+
+i{
+ width : 30px
+}
+
+/* Pour recherche */
+#recherche{
+  width : 70%;
+  height : 40px;
+  margin : auto;
+}
+
+#loupe{
+  width : 35px;
+  vertical-align: bottom;
+}
+
+#barre{
+  width : 70%;
+  height : 100%;
+  vertical-align: bottom;
+}
+
+
+/* Page principale */
+#vueRecetteTop5{
+  padding : 0px 10px;
+}
+
+.boutonOptions, #boutonRecette{
+  background-color: white;
+  border: none;
+}
+
+.boutonOptions{
+  float: right;
+}
+
+#Favoris, .Recettes{
+  list-style-type: none;
+}
+
+/* Page de recette */
+.description{
+  font-style : oblique;
+  border-left: 5px solid red;
+  background-color: LightGray;
+  padding : 10px;
+  min-width: 50%;
+  display: inline-block;
+  margin: 0% 25%;
+}
+
+#texteDescription{
+  text-align: center;
+}
+
+#piedDescription{
+  float: right;
+  bottom: 5px;
+  font-size: 12px;
+}
+
+#vueRecette{
+  display: inherit;
+  width: 70%;
+  margin: auto;
+}
+
+#ingredients{
+  width: 200px;
+  margin: 20px 0px;
+}
+
+#imageRecette{
+  width: 45%;
+  float: right;
+}
+
+aside{ /*Ingredients et instructions*/
+  border: 2px solid Gray;
+  -webkit-border-radius: 30px;
+  -moz-border-radius: 30px;
+  border-radius: 30px;
+}
+
+#instructions{
+  width: 300px;
+  margin: auto;
+}
+
+
+/* Page connexion et inscription */
+.formulaireInscription, .formulaireConnexion {
+  padding: 16px;
+  text-align: center;
+}
+
+input[type=utilisateur], .mot_de_passe{
+  width: 70%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.boutonConnexion {
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 70%;
+}
+
+.boutonConnexion:hover {
+  opacity: 0.8;
+}
+
+.infoManquante{
+  font-size: small;
+  color: red;
+  text-align: right;
+}
+
+
+
+label{
+  display:block;
+  padding:10px 0px;
+}
+
+pre{
+  padding-left:30px;
+}
+
+.MajusculeDebutMot{
+  text-transform: capitalize;
+}
