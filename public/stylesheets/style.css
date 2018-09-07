@@ -136,14 +136,6 @@ a:link{
 }
 
 
-
-
-
-.Recettes{ /*Top5*/
-  margin : auto;
-  text-align : center
-}
-
 footer{
   text-align : center;
   font-size: small;
@@ -224,7 +216,12 @@ i{
   padding : 0px 10px;
 }
 
-.boutonOptions, #boutonRecette{
+.Recettes{ /*Top5*/
+  margin : auto;
+  text-align : center
+}
+
+.boutonOptions, .boutonRecette{
   background-color: white;
   border: none;
 }
@@ -260,17 +257,12 @@ i{
 
 #vueRecette{
   display: inherit;
-  width: 70%;
+  width: 60%;
   margin: auto;
 }
 
-#ingredients{
-  width: 200px;
-  margin: 20px 0px;
-}
-
 #imageRecette{
-  width: 45%;
+  max-width: 30%;
   float: right;
 }
 
@@ -281,9 +273,13 @@ aside{ /*Ingredients et instructions*/
   border-radius: 30px;
 }
 
+#ingredients{
+  max-width: 50%;
+  margin: 20px 0px;
+}
+
 #instructions{
-  width: 300px;
-  margin: auto;
+  max-width: 100%;
 }
 
 
@@ -324,15 +320,35 @@ input[type=utilisateur], .mot_de_passe{
 
 
 
-label{
+label, .textareaInstructions{
   display:block;
-  padding:10px 0px;
+  padding:10px 20px;
 }
 
 pre{
   padding-left:30px;
+  max-width:95%;
+}
+
+.gestionDebordementTexte {
+  overflow: scroll;
+  word-wrap: break-word;
+  max-width:100%;
+  padding-left:10px;
 }
 
 .MajusculeDebutMot{
   text-transform: capitalize;
 }
+
+textarea{
+  min-width: 50%;
+  min-height: 30%;
+}
+
+.boutonProposition{
+  float:right;
+  vertical-align: bottom;
+  padding-right:30px;
+}
+

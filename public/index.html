@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 	<meta charset="utf-8">
-	<title>Site web</title>
+	<title>Trouve ta recette !</title>
 	<link rel="stylesheet" href="stylesheets/style.css"/>
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
@@ -30,7 +30,7 @@
 				<div id="boutonsCompteConnecte" class="material-icons" v-if="est_connecte">
 					<a href="javascript:void(0)">sentiment_satisfied_alt</a>
 					<div class="descenteBoutonsDroite">
-						<button v-on:click="chgmtPageEtFiltre ('PageInfoPerso', '',  '', '')" class="liensCompteConnecte" v-if="listeClients.nom_utilisateur !== 'admin'">Info Personnelles </button>
+						<button v-on:click="chgmtPageEtFiltre ('PageInfoPerso', '',  '', '')" class="liensCompteConnecte" v-if="listeUtilisateurs.nom_utilisateur !== 'admin'">Informations </button>
 						<!-- <button v-on:click="chgmtPageEtFiltre ('PageMail', '', '', '')" class="liensCompteConnecte">Mail</button> -->
 						<button v-on:click="fonctionDeconnection()" class="liensCompteConnecte">Déconnection</button>
 					</div>
@@ -40,31 +40,31 @@
 					<a href="javascript:void(0)" v-if="est_connecte">menu</a>
 					<div id="descenteBoutonsMenu">
 						<!-- Utilisateur non administrateur -->
-						<button v-if="listeClients.nom_utilisateur !== 'admin'" v-on:click="affichageRecetteAleatoire('PageRecette')" class="liensMenu">Pas d'idée </button>
-						<button v-if="listeClients.nom_utilisateur !== 'admin'" v-on:click="chgmtPageEtFiltre ('PageFavoris', '', '', '')" class="liensMenu">Favoris</button>
-						<button v-if="listeClients.nom_utilisateur !== 'admin'" v-on:click="chgmtPageEtFiltre ('PageListeCourses', '', '', '')" class="liensMenu">Liste de courses</button>
+						<button v-if="listeUtilisateurs.nom_utilisateur !== 'admin'" v-on:click="affichageRecetteAleatoire('PageRecette')" class="liensMenu">Pas d'idée </button>
+						<button v-if="listeUtilisateurs.nom_utilisateur !== 'admin'" v-on:click="chgmtPageEtFiltre ('PageFavoris', '', '', '')" class="liensMenu">Favoris</button>
+						<button v-if="listeUtilisateurs.nom_utilisateur !== 'admin'" v-on:click="chgmtPageEtFiltre ('PageListeCourses', '', '', '')" class="liensMenu">Liste de courses</button>
 
 						<!-- Utilisateur ET administrateur -->
 						<button v-on:click="chgmtPageEtFiltre ('PageProposition', '', '', '')" class="liensMenu">Proposition</button>
 
 						<!-- Administrateur -->
-						<button v-if="listeClients.nom_utilisateur === 'admin'" v-on:click="chgmtPageEtFiltre ('PageListeClients', '', '', '', '')" class="liensMenu">Liste clients</button>
-						<button v-if="listeClients.nom_utilisateur === 'admin'" v-on:click="chgmtPageEtFiltre ('PageToutesRecettes', '', '', '', '')" class="liensMenu">Toutes les recettes</button>
+						<button v-if="listeUtilisateurs.nom_utilisateur === 'admin'" v-on:click="chgmtPageEtFiltre ('PageListeClients', '', '', '', '')" class="liensMenu">Liste clients</button>
+						<button v-if="listeUtilisateurs.nom_utilisateur === 'admin'" v-on:click="chgmtPageEtFiltre ('PageToutesRecettes', '', '', '', '')" class="liensMenu">Toutes les recettes</button>
 					</div>
 				</div>
 				<div class="centrerBouton">
 					<button v-on:click="chgmtPageEtFiltre ('PageTop5', '', '5', '')" class="retourTop5">
 						<h1>Trouve ta recette !</h1>
-						<p id="bonjour" v-if="est_connecte === true">Bonjour {{listeClients.nom_utilisateur}} </p>
+						<p id="bonjour" v-if="est_connecte === true" >Bonjour {{input_identifiant}} </p>
 					</button>
 				</div>
 			</header>
 			<div id="contenu">
 				<nav>
 					<ul class="menuSite">
-						<li class="menuSiteElement"><button v-on:click="chgmtPageEtFiltre ('PageResultats', 'entree', '', '')" class="menuSiteLien">Entrées</button></li>
-						<li class="menuSiteElement"><button v-on:click="chgmtPageEtFiltre ('PageResultats', 'plat', '', '')" class="menuSiteLien">Plats</button></li>
-						<li class="menuSiteElement"><button v-on:click="chgmtPageEtFiltre ('PageResultats', 'dessert',  '', '')" class="menuSiteLien">Desserts</button></li>
+						<li class="menuSiteElement"><button v-on:click="chgmtPageEtFiltre ('PageResultats', 'Entrée', '', '')" class="menuSiteLien">Entrées</button></li>
+						<li class="menuSiteElement"><button v-on:click="chgmtPageEtFiltre ('PageResultats', 'Plat', '', '')" class="menuSiteLien">Plats</button></li>
+						<li class="menuSiteElement"><button v-on:click="chgmtPageEtFiltre ('PageResultats', 'Dessert',  '', '')" class="menuSiteLien">Desserts</button></li>
 						<li class="menuSiteElement"><button v-on:click="chgmtPageEtFiltre ('PageResultats', '', '', 'o')" class="menuSiteLien">Nouvelles recettes</button></li>		
 					</ul>
 					<br>
@@ -77,18 +77,14 @@
 				</nav>
 				<!-- Page d'accueil (Top5) -->
 				<section v-if="pageActuelle === 'PageTop5'" id="PageTop5">
-					<h2>Top 5</h2>
-					<ul>
-						<li v-for="(item, index) in myList">{{ item.name }}
-							<button v-on:click="deleteElement(index)">Supprimer !</button>
-						</li>
-					</ul>
-					<input type="text" v-model="name">
-					<button v-on:click="sendNewElement()">Ajouter !</button>
-
+					<h2>Top</h2>
 					<table class="Recettes" >
 						<tr v-for="key in Object.keys(listeRecettes[0])" v-if="key==='description' || key==='titre'">
-							<td id="vueRecetteTop5" v-for="recette in affichageFiltre()"> {{recette[key]}}</td>
+							<td id="vueRecetteTop5" v-for="recette in affichageFiltre()"> 
+                <button class="boutonRecette" v-on:click="affichageRecette('PageRecette', recette)" >
+								{{recette[key]}}
+							</button>
+              </td>
 						</tr>
 					</table>
 				</section>
@@ -96,8 +92,8 @@
 				<!-- Pages du menu SI connection -->
 				<section v-else-if="pageActuelle === 'PageInfoPerso'" id="PageInfoPerso">
 					<h2>Informations Personnelles</h2>
-					<p>Identifiant : {{listeClients.nom_utilisateur}} </p>
-					<p>Mot de passe : {{listeClients.mot_de_passe}}</p>
+					<p>Identifiant : {{listeUtilisateurs.nom_utilisateur}} </p>
+					<p>Mot de passe : {{listeUtilisateurs.mot_de_passe}}</p>
 				</section>
 				<!-- <section v-else-if="pageActuelle === 'PageMail'" id="PageMail">
 					<h2>Changez votre email</h2>
@@ -179,18 +175,80 @@
 					</div>
 				</section>
 				<section v-else-if="pageActuelle === 'PageProposition'"  id="PageProposition">
-					<h2>
+					<h2 v-if="modif===false">
 						Vos propositions de recettes
 					</h2>
-					<div>
-					</div>
+          <h2 v-else>
+            Vos modifications
+          </h2>
+          <form>
+            <label>
+                <b>Titre </b>
+                <input type="text" v-model="propositionTitre" placeholder="Titre de la recette" required>
+            </label>
+            <label>
+                <b>Type </b>
+              <select name="select" v-model="propositionType">
+                <option>Entrée</option>
+                <option>Plat</option>
+                <option>Dessert</option>
+              </select>
+            </label>
+            <label v-if="modif===true">
+                <b>Nouveau </b>
+              <select name="select" v-model="propositionNouveau">
+                <option>oui</option>
+                <option>non</option>
+              </select>
+            </label>
+            <label v-if="modif===true">
+                <b>Avis </b>
+              <select name="select" v-model="propositionAvis">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+              </select>
+            </label>
+            <label v-if="modif===true">
+                <b>Auteur </b>
+                <input type="text" v-model="propositionAuteur" placeholder="Auteur">
+            </label>
+            <label>
+                <b>Description </b>
+                <input type="text" v-model="propositionDescription" placeholder="Votre description">
+            </label>
+            <label>
+                <b>Image </b>
+                <input type="text" v-model="propositionImage" placeholder="Url de l'image" required>
+            </label>
+            <label>
+                <b>Ingredients</b>
+                <input type="text" v-model="propositionIngredient" placeholder="Vos ingredients" required>
+                <button v-on:click.prevent="ajouterNouvelIngredient()">Ajouter</button>
+                <ul class="MajusculeDebutMot">
+                  <li v-for="ingredient in propositionListeIngredients">
+                    {{ingredient.nom}}
+                  </li>
+              </ul>
+            </label>
+            <label> <b>Instructions</b></label>
+            <div class="textareaInstructions">
+              <textarea v-model="propositionInstructions" placeholder="Etapes de la recette" required></textarea>
+            </div>
+              <div class="boutonProposition">
+            <button v-on:click.prevent="ajouterNouvelleRecette()" v-if="modif===false">Envoyer</button>
+            <button v-on:click.prevent="modifierRecette()" v-else>Modifier</button>
+            </div>
+              </form>
 				</section>
 				<section v-else-if="pageActuelle === 'PageListeCourses'" id="PageListeCourses">
 					<h1>
 						Votre liste de courses
 					</h1>
 					<ul id="Courses">
-						<li v-for="course in listeCourses">
+						<li v-for="course in coursesUtilisateur">
 							{{course.nom}}
 						</li>
 					</ul>
@@ -200,8 +258,10 @@
 						Vos Favoris
 					</h1>
 					<ul id="mesFavoris">
-						<li v-for="favori in listeFavoris">
-							{{favori.titre}}
+						<li v-for="favori in favorisUtilisateur">
+							<button class="boutonRecette" v-on:click="rechercheFavoris()" >
+								{{favori.titre}}
+							</button>
 						</li>
 					</ul>
 				</section>
@@ -213,11 +273,9 @@
 					<div>
 						<ul>
 							<li v-for="(item, index) in myList">{{ item.name }}
-								<button v-on:click="deleteElement(index)">Supprimer !</button>
+								<button v-on:click="supprimerUtilisateur(index)">Supprimer !</button>
 							</li>
 						</ul>
-						<input type="text" v-model="name">
-						<button v-on:click="sendNewElement()">Ajouter !</button>
 					</div>
 				</section>
 				<section v-else-if="pageActuelle === 'PageToutesRecettes'" id="PageToutesRecettes">
@@ -226,12 +284,14 @@
 					</h2>
 					<div>
 						<ul>
-							<li v-for="(item, index) in myList">{{ item.name }}
-								<button v-on:click="deleteElement(index)">Supprimer !</button>
+              <li v-for="(recette, index) in listeRecettes">
+              <button class="boutonRecette" v-on:click="affichageRecette('PageRecette', recette)" >
+								{{recette.titre}}
+							</button>
+								<button v-on:click="affichageModificationRecette(index, recette)">Modifier</button>
+                <button v-on:click="supprimerRecette(index)">Supprimer</button>
 							</li>
 						</ul>
-						<input type="text" v-model="name">
-						<button v-on:click="sendNewElement()">Ajouter !</button>
 					</div>
 				</section>
 				<!-- Dans les deux cas -->
@@ -242,7 +302,7 @@
 							Aucune recette ne contient cet ingrédient.
 						</p>
 						<li v-for="recette in affichageFiltre()">
-							<button v-if="contenuActuel === 'ResultatPositif'" id="boutonRecette" v-on:click="affichageRecette('PageRecette', recette)" >
+							<button v-if="contenuActuel === 'ResultatPositif'" class="boutonRecette" v-on:click="affichageRecette('PageRecette', recette)" >
 								{{recette.titre}}
 							</button>
 						</li>
@@ -253,10 +313,10 @@
 					<h1>
 						{{recetteAAfficher.titre}}
 					</h1>
-					<button class="boutonOptions" title="ajouterListeCourses" v-on:click="chgmtPageEtFiltre ('PageListeCourses', '', '', '')">
+					<button class="boutonOptions" title="ajouterListeCourses" v-on:click="chgmtPageEtFiltre ('PageListeCourses', '', '', '')" v-if="est_connecte">
 						<i  class="material-icons">add_shopping_cart</i>
 					</button>
-					<button class="boutonOptions" title="ajouterFavoris" v-on:click="chgmtPageEtFiltre ('PageFavoris', '', '', '')">
+					<button class="boutonOptions" title="ajouterFavoris" v-on:click="chgmtPageEtFiltre ('PageFavoris', '', '', '')" v-if="est_connecte">
 						<i class="material-icons">favorite_border</i>
 					</button>
 					<div class="description">
@@ -269,7 +329,7 @@
 					</div>
 					<div id="vueRecette">
 						<img id="imageRecette" v-bind:src="recetteAAfficher.image" />
-						<aside id="ingredients">
+						<aside id="ingredients" class="MajusculeDebutMot">
 							<h2>
 								Ingrédients
 							</h2>
@@ -279,16 +339,13 @@
 								</li>
 							</ul>
 						</aside>
-					</div>
-					<aside id="instructions">
-						<h2>
-							Instructions
-						</h2>
-						<ol>
-							<li v-for="instruction in recetteAAfficher.instructions">{{instruction.texte}}
-							</li>
-						</ol>
-					</aside>
+            <aside id="instructions" class="MajusculeDebutMot">
+              <h2>
+                Instructions
+              </h2>
+              <pre class="gestionDebordementTexte"><p>{{recetteAAfficher.instructions}}</p></pre>
+            </aside>
+          </div>
 				</section>
 				<br><br>
 			</div>
