@@ -23,14 +23,14 @@
 					<a href="javascript:void(0)">account_circle</a>
 					<div class="descenteBoutonsDroite">
 						<button v-on:click="chgmtPageEtFiltre ('PageConnexion', '', '', '')" class="liensComptePasConnecte">Connection </button>
-						<button v-on:click="chgmtPageEtFiltre ('PageInscription', '', '', '')" class="liensComptePasConnecte">Inscription </button>
+						<!--<button v-on:click="chgmtPageEtFiltre ('PageInscription', '', '', '')" class="liensComptePasConnecte">Inscription </button>-->
 					</div>
 				</div>
 				<!-- Boutons utilisateur quand connecté (à droite)-->
 				<div id="boutonsCompteConnecte" class="material-icons" v-if="est_connecte">
 					<a href="javascript:void(0)">sentiment_satisfied_alt</a>
 					<div class="descenteBoutonsDroite">
-						<button v-on:click="chgmtPageEtFiltre ('PageInfoPerso', '',  '', '')" class="liensCompteConnecte" v-if="listeUtilisateurs.nom_utilisateur !== 'admin'">Informations </button>
+						<button v-on:click="chgmtPageEtFiltre ('PageInfoPerso', '',  '', '')" class="liensCompteConnecte" v-if="input_identifiant !== 'admin'">Informations </button>
 						<!-- <button v-on:click="chgmtPageEtFiltre ('PageMail', '', '', '')" class="liensCompteConnecte">Mail</button> -->
 						<button v-on:click="fonctionDeconnection()" class="liensCompteConnecte">Déconnection</button>
 					</div>
@@ -40,18 +40,19 @@
 					<a href="javascript:void(0)" v-if="est_connecte">menu</a>
 					<div id="descenteBoutonsMenu">
 						<!-- Utilisateur non administrateur -->
-						<button v-if="listeUtilisateurs.nom_utilisateur !== 'admin'" v-on:click="affichageRecetteAleatoire('PageRecette')" class="liensMenu">Pas d'idée </button>
-						<button v-if="listeUtilisateurs.nom_utilisateur !== 'admin'" v-on:click="chgmtPageEtFiltre ('PageFavoris', '', '', '')" class="liensMenu">Favoris</button>
-						<button v-if="listeUtilisateurs.nom_utilisateur !== 'admin'" v-on:click="chgmtPageEtFiltre ('PageListeCourses', '', '', '')" class="liensMenu">Liste de courses</button>
+						<button v-if="input_identifiant !== 'admin'" v-on:click="affichageRecetteAleatoire('PageRecette')" class="liensMenu">Pas d'idée </button>
+						<button v-if="input_identifiant !== 'admin'" v-on:click="chgmtPageEtFiltre ('PageFavoris', '', '', '')" class="liensMenu">Favoris</button>
+						<button v-if="input_identifiant !== 'admin'" v-on:click="chgmtPageEtFiltre ('PageListeCourses', '', '', '')" class="liensMenu">Liste de courses</button>
 
 						<!-- Utilisateur ET administrateur -->
 						<button v-on:click="chgmtPageEtFiltre ('PageProposition', '', '', '')" class="liensMenu">Proposition</button>
 
 						<!-- Administrateur -->
-						<button v-if="listeUtilisateurs.nom_utilisateur === 'admin'" v-on:click="chgmtPageEtFiltre ('PageListeClients', '', '', '', '')" class="liensMenu">Liste clients</button>
-						<button v-if="listeUtilisateurs.nom_utilisateur === 'admin'" v-on:click="chgmtPageEtFiltre ('PageToutesRecettes', '', '', '', '')" class="liensMenu">Toutes les recettes</button>
+						<button v-if="input_identifiant === 'admin'" v-on:click="chgmtPageEtFiltre ('PageListeClients', '', '', '', '')" class="liensMenu">Liste clients</button>
+						<button v-if="input_identifiant === 'admin'" v-on:click="chgmtPageEtFiltre ('PageToutesRecettes', '', '', '', '')" class="liensMenu">Toutes les recettes</button>
 					</div>
 				</div>
+        <!--Titre du site-->
 				<div class="centrerBouton">
 					<button v-on:click="chgmtPageEtFiltre ('PageTop5', '', '5', '')" class="retourTop5">
 						<h1>Trouve ta recette !</h1>
@@ -61,6 +62,7 @@
 			</header>
 			<div id="contenu">
 				<nav>
+          <!--Menu de navigation-->
 					<ul class="menuSite">
 						<li class="menuSiteElement"><button v-on:click="chgmtPageEtFiltre ('PageResultats', 'Entrée', '', '')" class="menuSiteLien">Entrées</button></li>
 						<li class="menuSiteElement"><button v-on:click="chgmtPageEtFiltre ('PageResultats', 'Plat', '', '')" class="menuSiteLien">Plats</button></li>
@@ -68,6 +70,7 @@
 						<li class="menuSiteElement"><button v-on:click="chgmtPageEtFiltre ('PageResultats', '', '', 'o')" class="menuSiteLien">Nouvelles recettes</button></li>		
 					</ul>
 					<br>
+          <!--Barre de recherche-->
 					<form id="recherche" >
 						<input id="barre" type="search" name="q" placeholder="Rechercher par ingrédient" v-model="filtreIngredient">
 						<button v-on:click.prevent="chgmtPageEtFiltre ('PageResultats','', '', '')" class="img-submit">
@@ -89,21 +92,17 @@
 					</table>
 				</section>
 
-				<!-- Pages du menu SI connection -->
+				<!-- Pages du menu SI connecté -->
 				<section v-else-if="pageActuelle === 'PageInfoPerso'" id="PageInfoPerso">
 					<h2>Informations Personnelles</h2>
-					<p>Identifiant : {{listeUtilisateurs.nom_utilisateur}} </p>
-					<p>Mot de passe : {{listeUtilisateurs.mot_de_passe}}</p>
+					<p>Identifiant : {{input_identifiant}} </p>
+					<p>Mot de passe : {{input_mdp}}</p>
 				</section>
-				<!-- <section v-else-if="pageActuelle === 'PageMail'" id="PageMail">
-					<h2>Changez votre email</h2>
-					<p>blablabla</p>
-				</section> -->
 				<section v-else-if="pageActuelle === 'PageDeconnection'" id="PageDeconnection">
 					<h2>Vous êtes maintenant déconnecté !</h2>
 				</section>
 
-				<!-- Pages du menu SI PAS connection -->
+				<!-- Pages du menu SI NON connecté -->
 				<section v-else-if="pageActuelle === 'PageConnexion'" id="PageConnexion">
 					<form class="formulaireConnexion">
 						<h2>
@@ -166,7 +165,7 @@
 					</form>
 				</section>
 
-				<!-- Pages du menu de gauche -->
+				<!-- Pages du menu de gauche UTILISATEUR -->
 				<section v-else-if="pageActuelle === 'PagePasIdee'" id="PagePasIdee">
 					<h2>
 						Pas d'idées...
@@ -259,21 +258,23 @@
 					</h1>
 					<ul id="mesFavoris">
 						<li v-for="favori in favorisUtilisateur">
-							<button class="boutonRecette" v-on:click="rechercheFavoris()" >
+							<button class="boutonRecette" v-on:click="rechercheFavoris(favori)" >
 								{{favori.titre}}
 							</button>
 						</li>
 					</ul>
 				</section>
-				<!-- Si administrateur -->
+				
+        <!--Pages du menu gauche ADMIN -->
 				<section v-else-if="pageActuelle === 'PageListeClients'" id="PageListeClients">
 					<h2>
 						Liste des clients
 					</h2>
 					<div>
 						<ul>
-							<li v-for="(item, index) in myList">{{ item.name }}
-								<button v-on:click="supprimerUtilisateur(index)">Supprimer !</button>
+							<li v-for="(utilisateur, index) in listeUtilisateurs">
+                {{utilisateur.nom_utilisateur}}
+                <button v-on:click="supprimerUtilisateur(index)">Supprimer</button>
 							</li>
 						</ul>
 					</div>
@@ -294,7 +295,8 @@
 						</ul>
 					</div>
 				</section>
-				<!-- Dans les deux cas -->
+				
+        <!-- Avec et sans connexion -->
 				<section v-else-if="pageActuelle === 'PageResultats'" id="PageResultats">
 					<h2>Résultats</h2>
 					<ul class="Recettes">
@@ -314,11 +316,11 @@
 						{{recetteAAfficher.titre}}
 					</h1>
 					<button class="boutonOptions" title="ajouterListeCourses" v-on:click="chgmtPageEtFiltre ('PageListeCourses', '', '', '')" v-if="est_connecte">
-						<i  class="material-icons">add_shopping_cart</i>
+						<i class="material-icons">add_shopping_cart</i>
 					</button>
-					<button class="boutonOptions" title="ajouterFavoris" v-on:click="chgmtPageEtFiltre ('PageFavoris', '', '', '')" v-if="est_connecte">
+					<button class="boutonOptions" title="ajouterAuxFavoris" v-on:click="ajouterFavoris(recetteAAfficher)" v-if="est_connecte">
 						<i class="material-icons">favorite_border</i>
-					</button>
+          </button>
 					<div class="description">
 						<p id="texteDescription">
 							{{recetteAAfficher.description}}

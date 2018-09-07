@@ -4,7 +4,7 @@ body{
   margin: 0px;
   padding-top: 2%;
   padding-bottom: 2%;
-  background-image: url("http://www.maximumwall.com/wp-content/uploads/2017/01/fond-ecran-wallpaper-image-nourriture-espagnol-19.jpg");
+  background-image: url("https://cdn.glitch.com/ab76469f-54a7-46fc-9853-fa7438ecba1d%2Ffond-ecran-wallpaper-image-nourriture-espagnol-19.jpg?1536337154108");
   background-size: 160%;
 }
 
@@ -266,7 +266,24 @@ i{
   float: right;
 }
 
-aside{ /*Ingredients et instructions*/
+pre{
+  padding-left:30px;
+  max-width:95%;
+}
+
+.gestionDebordementTexte {
+  overflow: scroll;
+  word-wrap: break-word;
+  max-width:100%;
+  padding-left:10px;
+}
+
+.MajusculeDebutMot{
+  text-transform: capitalize;
+}
+
+/*Ingredients et instructions*/
+aside{ 
   border: 2px solid Gray;
   -webkit-border-radius: 30px;
   -moz-border-radius: 30px;
@@ -319,26 +336,10 @@ input[type=utilisateur], .mot_de_passe{
 }
 
 
-
+/*Page proposition*/
 label, .textareaInstructions{
   display:block;
   padding:10px 20px;
-}
-
-pre{
-  padding-left:30px;
-  max-width:95%;
-}
-
-.gestionDebordementTexte {
-  overflow: scroll;
-  word-wrap: break-word;
-  max-width:100%;
-  padding-left:10px;
-}
-
-.MajusculeDebutMot{
-  text-transform: capitalize;
 }
 
 textarea{

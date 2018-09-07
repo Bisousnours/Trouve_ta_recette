@@ -1,39 +1,13 @@
 var express = require('express');
 var router = express.Router();
 
-
-/* BDD de la liste des recettes */
-const list = [
-  { name: 'elem1' }, 
-  { name: 'elem2' }
-]
-
-router.get('/list', (req, res) => {
-  res.json(list)
-})
-
-router.post('/list', (req, res) => {
-  list.push({
-    name: req.body.name
-  })
-  res.send('OK')
-})
-
-router.delete('/list/:id', (req, res) => {
-  var index = -1
-  for(var i in list){
-    if (i===req.params.id) {
-      index = i
-    }
-  }
-  list.splice(index, 1)
-  res.send('OK')
-})
-
 /* BDD des identifiants des clients*/
 const bddUtilisateurs = [
-  { nom_utilisateur: 'admin' , mot_de_passe: 'admin', liste_courses: [{nom: 'Lait'},{nom: 'Oeufs'},{nom: 'Jambon'}], favoris: [{titre: 'Moussaka'},{titre: 'Pâte à crêpe'}]}, 
-  { nom_utilisateur: 'user1' , mot_de_passe: 'user1', liste_courses: [{nom: 'tomates'},{nom: 'herbes de provence'},{nom: 'moutarde'}], favoris: [{titre: 'Tarte à la tomate'},{titre: 'Flan au carottes'}]}
+  { nom_utilisateur: 'admin' , mot_de_passe: 'admin', liste_courses: [{nom: 'lait'},{nom: 'oeufs'},{nom: 'jambon'}], favoris: [{titre: 'Moussaka'},{titre: 'Pâte à crêpe'}]}, 
+  { nom_utilisateur: 'user1' , mot_de_passe: 'user1', liste_courses: [{nom: 'tomates'},{nom: 'herbes de provence'},{nom: 'moutarde'}], favoris: [{titre: 'Tarte à la tomate'},{titre: 'Flan au carottes'}]},
+  { nom_utilisateur: 'user2' , mot_de_passe: 'user2', liste_courses: [{nom: 'tomates'},{nom: 'herbes de provence'},{nom: 'moutarde'}], favoris: [{titre: 'Tarte à la tomate'},{titre: 'Flan au carottes'}]},
+  { nom_utilisateur: 'user3' , mot_de_passe: 'user3', liste_courses: [{nom: 'tomates'},{nom: 'herbes de provence'},{nom: 'moutarde'}], favoris: [{titre: 'Tarte à la tomate'},{titre: 'Flan au carottes'}]},
+  { nom_utilisateur: 'user4' , mot_de_passe: 'user4', liste_courses: [{nom: 'tomates'},{nom: 'herbes de provence'},{nom: 'moutarde'}], favoris: [{titre: 'Tarte à la tomate'},{titre: 'Flan au carottes'}]}
 ]
 
 router.get('/bddUtilisateurs', (req, res) => {
@@ -48,7 +22,36 @@ router.post('/bddUtilisateurs', (req, res) => {
   res.send('OK')
 })
 
+router.post('/bddUtilisateurs/:id/:titre', (req, res) => {
+  var index = -1
+  for(var i in bddUtilisateurs){
+    if (i===req.params.id) {
+      index = i
+    }
+  }
+  if (index!== -1)  {
+    bddUtilisateurs[index].favoris.push({
+              titre:req.params.titre
+    })
+  }
+  
+  res.send('OK')
+})
 
+router.delete('/bddUtilisateurs/:id', (req, res) => {
+  var index = -1
+  for(var i in bddUtilisateurs){
+    if (i===req.params.id) {
+      index = i
+    }
+  }
+  if (index!== -1)  {
+    bddUtilisateurs.splice(index, 1)
+  }
+  res.send('OK')
+})
+
+/* liste des recettes*/
 const bddRecettes = [
       {titre: 'Moussaka', type: 'Plat', nouveau: 'non', description: 'La vrai moussaka grecque !', avis:'1', ingredients: [
       {nom: 'aubergines'},

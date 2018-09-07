@@ -62,6 +62,7 @@ const app = new Vue({
 	    })
 	},
 	methods: {
+    /*Retourne les recettes correspondant à un filtre donné*/
     affichageFiltre (){
 			if (this.filtreType !== ''){
 				return this.listeRecettes.filter(recette => 
@@ -82,6 +83,7 @@ const app = new Vue({
 				})
 			}
 		},
+    /*Change de section, change de contenu*/
 		chgmtPageEtFiltre (page, filtreType, filtreAvis, filtreNouveau) {
 				var trouve = 0
 				this.pageActuelle = page
@@ -110,6 +112,7 @@ const app = new Vue({
 					})
 				}
 		},
+    /*Remet à zéro les variables de proposition*/
     reinitialisationModif(){
       if(this.modif===true){
             this.modif=false
@@ -121,6 +124,7 @@ const app = new Vue({
       this.propositionInstructions=''
       this.propositionImage=''
     },
+    /*Affiche une recette*/
     affichageRecette(page, recette){
 			this.pageActuelle = page
 			this.recetteAAfficher.titre = recette.titre
@@ -131,6 +135,7 @@ const app = new Vue({
 			this.recetteAAfficher.auteur = recette.auteur
 			this.recetteAAfficher.image = recette.image
 		},
+    /*Affiche une recette aléatoire*/
 		affichageRecetteAleatoire(page){
 			var tailleListeRecettes = 0
 			for(var i in this.listeRecettes){
@@ -139,12 +144,22 @@ const app = new Vue({
 			const index = Math.floor(Math.random() * tailleListeRecettes);
       this.affichageRecette(page, this.listeRecettes[index])
 		},
+    /*Retrouve le favori dans la liste de recettes*/
+    rechercheFavoris(favori){
+      for(var i in this.listeRecettes) {
+        if (this.listeRecettes[i].titre===favori.titre){
+          this.affichageRecette('PageRecette', this.listeRecettes[i])
+        }
+      }
+    },
+    /*Ajoute un nouvel ingrédient (front-end)*/
     ajouterNouvelIngredient(){
       this.propositionListeIngredients.push({
         nom: this.propositionIngredient
       })
       this.propositionIngredient = ''
     },
+    /*Ajoute une nouvelle recette (front et back end)*/
     ajouterNouvelleRecette(){
       this.$http.post('/bddRecettes', {
           titre: this.propositionTitre,
@@ -181,12 +196,14 @@ const app = new Vue({
         this.chgmtPageEtFiltre('PageTop5', '', '5', '')
       }) 
     },
+    /*Supprime une nouvelle recette (front et back end)*/
     supprimerRecette(index){
       this.$http.delete('/bddRecettes/' + index,{	})
         .then(() => {
           this.listeRecettes.splice(index, 1)
         })
     },
+    /*Affiche la recette à modifier*/
     affichageModificationRecette(index,recette){
       this.modif=true
       this.pageActuelle='PageProposition'
@@ -201,6 +218,7 @@ const app = new Vue({
       this.propositionImage=recette.image
       this.modificationIndex=index
     },
+    /*Modifie une recette (front et back end)*/
     modifierRecette(){
       
      this.$http.put('/bddRecettes/' +this.modificationIndex,{	
@@ -229,25 +247,30 @@ const app = new Vue({
             this.chgmtPageEtFiltre('PageTop5', '', '5', '')
           })
     },
-    sendNewElement () {
-        this.$http.post('/list', {
-          name: this.name
-        })
+    supprimerUtilisateur(index){
+      this.$http.delete('/bddUtilisateurs/' + index,{	})
         .then(() => {
-          this.myList.push({
-            name: this.name
-          })
+          this.listeUtilisateurs.splice(index, 1)
         })
     },
-    deleteElement(index){
-        this.$http.delete('/list/' + index,{	})
-        .then(() => {
-          this.myList.splice(index, 1)
-        })
+    /*Ajoute une recette à ses favoris en front end*/
+    ajouterFavoris(fav){
+      /*this.$http.post('/bddUtilisateurs/'+ this.input_identifiant+ '/'+ fav.titre, {})
+      .then(() => {*/
+        for(var i in this.listeUtilisateurs){
+          if(this.listeUtilisateurs[i].nom_utilisateur===this.input_identifiant){
+            this.listeUtilisateurs[i].favoris.push({
+              titre:fav.titre
+            })
+          }
+        }
+      /*})*/
     },
+    /*Afficher ou cacher le mot de passe*/
     modifVisibilite(){
     this.mot_de_passe = this.mot_de_passe === 'password' ? 'text' : 'password';
     },
+    /*Permet de se connecter*/
 		fonctionConnexion() {   
 		  	if(this.input_identifiant !== undefined && this.input_mdp !== undefined){
 		  		for(var user in this.listeUtilisateurs){
@@ -282,6 +305,7 @@ const app = new Vue({
 			}
 		
     },
+    /*Permet de s'inscrire*/
 		fonctionInscription(){
       if(this.input_identifiant !== undefined && this.input_mdp !== undefined){
 		  		console.log('nom et mdp = entrés')
@@ -316,44 +340,8 @@ const app = new Vue({
 				this.mdp = false;
 				console.log('rien d\'inscrit')
 			}
-		
-
-      
-			/*Affectation des données du serveur*/
-			/*if(this.input_identifiant !== undefined){
-				this.listeUtilisateurs.nom_utilisateur = this.input_identifiant;
-			}
-			else{
-				this.listeUtilisateurs.nom_utilisateur = undefined
-			}
-			
-			if(this.input_mdp !== undefined && this.input_confirmation_mdp === this.input_mdp){
-				this.listeUtilisateurs.mot_de_passe = this.input_mdp;
-			}
-			else{
-				this.listeUtilisateurs.mot_de_passe = undefined
-			}
-			
-			if(this.listeUtilisateurs.nom_utilisateur !== undefined && this.listeClients.mot_de_passe !== undefined){
-				this.est_connecte = true;
-				this.identifiant = true;
-				this.mdp = true;
-				this.$http.post('/client', {
-					listeUtilisateurs: this.listeUtilisateurslisteUtilisateurslisteUtilisateurslisteUtilisateurslisteUtilisateurslisteUtilisateurslisteUtilisateurslisteUtilisateurslisteUtilisateurslisteUtilisateurslisteUtilisateurslisteUtilisateurslisteUtilisateurslisteUtilisateursvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-				})listeUtilisateurslisteUtilisateurslisteUtilisateurslisteUtilisateurslisteUtilisateurslisteUtilisateurslisteUtilisateursvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-				.then(() => {
-					this.mesClients.push({
-						listeUtilisateurs: this.listeUtilisateurs
-					})
-				})
-				console.log('le client est : ' + this.listeUtilisateursisteUtilisateurslisteUtilisateurslisteUtilisateurslisteUtilisateurslisteUtilisateurslisteUtilisateurslisteUtilisateursliste.nom_utilisateur + ' mdp : ' + this.listeClients.mot_de_passe)
-				this.chgmtPageEtFiltre('PageTop5', '', '5', '')
-			}
-			Pas de connexion
-			else{
-				this.est_connecte = false;
-			}*/
 		},
+    /*Permet de se déconnecter*/
 		fonctionDeconnection() {
       	if(this.est_connecte == true){
 				this.est_connecte = false;
